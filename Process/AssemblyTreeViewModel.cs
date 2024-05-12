@@ -49,11 +49,11 @@ namespace AssemblyBrowserLab
 
                 try
                 {
-                    _model = _crawler.Process(value);
+                    _crawler.Process(value);
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Chosen file isn't an assembly file...",
+                    MessageBox.Show("Can't process this file",
                         "Error",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -61,7 +61,7 @@ namespace AssemblyBrowserLab
                 }
 
                 _assemblyName = value;
-                TreeNodes = _mapper.Process(_model);
+                TreeNodes = _mapper.Process(_crawler.Model()!);
             }
         }
 
