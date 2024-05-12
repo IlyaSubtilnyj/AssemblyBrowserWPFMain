@@ -5,14 +5,40 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
+using AssemblyBrowserLib;
+using System.ComponentModel;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Collections.ObjectModel;
 
 namespace AssemblyBrowserLab
 {
-    internal class AssemblyTreeViewModel
+    internal class AssemblyTreeViewModel: INotifyPropertyChanged
     {
-        public AssemblyTreeViewModel() { }
+
+        private AssemblyCrawler _crawler;
+        private Mapper _mapper;
+        private List<TreeViewItem> _treeNodes;
+
+        public AssemblyTreeViewModel() 
+        {
+            _crawler    = new AssemblyCrawler();
+            _mapper     = new Mapper();
+            _treeNodes  = new List<TreeViewItem>();
+        }
+        public List<TreeViewItem> TreeNodes
+        {
+            get { return _treeNodes; }
+            set
+            {
+                _treeNodes = value;
+                OnPropertyChanged();
+            }
+        }
 
         private string? _assemblyName;
+        private AssemblyTree? _model;
+
         public string? SourceName
         {
             get { return _assemblyName; }
@@ -21,9 +47,30 @@ namespace AssemblyBrowserLab
                 if (value == null)
                     return;
 
+                try
+                {
+                    _model = _crawler.Process(value);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Chosen file isn't an assembly file...",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+
                 _assemblyName = value;
-                MessageBox.Show(_assemblyName);             
+                TreeNodes = _mapper.Process(_model);
             }
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
     }
 }

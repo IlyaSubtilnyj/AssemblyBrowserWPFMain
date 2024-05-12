@@ -11,15 +11,25 @@
     </Window.DataContext>
     
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="360"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
 
-        <Button>
+        <TreeView Grid.Row="0" Background="AntiqueWhite" FontSize="16">
+            <TreeView.ItemsSource>
+                <Binding Path="TreeNodes" />
+            </TreeView.ItemsSource>
+        </TreeView>
+
+        <Button Grid.Row="1" VerticalContentAlignment="Center" FontSize="18">
             <Button.Command>
                 <local:OpenDialogCommand/>
             </Button.Command>
             <Button.CommandParameter>
                 <Binding />
             </Button.CommandParameter>
-            Choose Assembly
+            Choose assembly
         </Button> 
 
     </Grid>
